@@ -6,3 +6,7 @@
 .found-words ul {
     column-count: 3;
 }
+
+.status-error {
+    color: red;
+}
