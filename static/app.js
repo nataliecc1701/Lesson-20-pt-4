@@ -99,9 +99,11 @@ function updateRecords(numGames, highScore) {
 
 async function reportScore() {
     console.log("reporting score")
-    response = await axios.post("/stats", {score})
     
-    console.log(response.data)
+    response = await axios.post("/stats", {score})
+    const { gamesPlayed, highScore } = response.data;
+    
+    updateRecords(gamesPlayed, highScore);
 }
 
 gameBoard.style.display = "none";

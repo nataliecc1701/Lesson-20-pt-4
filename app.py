@@ -13,8 +13,7 @@ boggle_game = Boggle()
 
 @app.route("/")
 def display_index():
-    if not session.get("board", None):
-        session["board"] = boggle_game.make_board()
+    session["board"] = boggle_game.make_board()
     num_games = session.get("games-played", 0)
     high_score = session.get("high-score", 0)
     return render_template("gameboard.html", numGames = num_games, highScore = high_score)
