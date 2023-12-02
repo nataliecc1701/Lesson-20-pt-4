@@ -3,6 +3,8 @@ const foundWordsList = document.querySelector("ul.found-words");
 const foundWordsForm = document.querySelector("form.words-form");
 const foundWordBox = foundWordsForm.querySelector("#word-input");
 
+let score = 0;
+
 
 function setIndicator(s, errMsg=false) {
     const wordStatusIndicator = document.querySelector("#word-status");
@@ -14,6 +16,11 @@ function setIndicator(s, errMsg=false) {
     else {
         wordStatusIndicator.classList.remove("status-error")
     }
+}
+
+function updateScore() {
+    const scoreDisp = document.querySelector("#score-num");
+    scoreDisp.innerText = score;
 }
 
 async function formSubmit(evt) {
@@ -36,6 +43,9 @@ async function formSubmit(evt) {
             const newLi = document.createElement("li");
             newLi.innerText = word;
             foundWordsList.appendChild(newLi);
+            
+            score += word.length;
+            updateScore();
         }
         else if (foundWordsSet.has(word)) {
             setIndicator(`The word "${word}" is already found!`, true)
