@@ -5,6 +5,10 @@ from boggle import Boggle
 
 
 class FlaskTests(TestCase):
-
+    
     # TODO -- write tests for every view function / feature!
-
+    
+    # test cases for index route:
+    # test that the board is created
+    # test that the form is displayed
+    ''''''
