@@ -18,10 +18,9 @@ def display_index():
     high_score = session.get("high-score", 0)
     return render_template("gameboard.html", numGames = num_games, highScore = high_score)
 
-@app.route("/word", methods=["POST"])
+@app.route("/word")
 def check_word():
-    req = request.get_json()
-    word = req.get("word", None)
+    word = request.args.get("word", None)
     board = session.get("board", None)
     retDict = {"word" : word}
     

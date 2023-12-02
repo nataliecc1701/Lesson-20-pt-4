@@ -38,9 +38,7 @@ async function formSubmit(evt) {
     
     setIndicator("...")
     try {
-        response = await axios.post("/word", {
-            word : foundWord
-        })
+        response = await axios.get(`/word?word=${foundWord}`)
         const { word, result } = response.data
         
         if (result == "ok" && !foundWordsSet.has(word)) {
