@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>index.html</title>
+    <link rel="stylesheet" href="static/style.css" />
+</head>
+
+<body>
+    <h1>Boggle</h1>
+    <container class="game-board">
+        <table>
+        {% for row in session["board"] %}
+        <tr>
+            {% for ltr in row %}
+                <td>{{ltr}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </container>
+</body>
+
+</html>
