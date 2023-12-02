@@ -78,6 +78,32 @@ foundWordsForm.addEventListener("submit", formSubmit);
 // when you press the button (add this to gameboard.html),
 // show the gameboard and start the timer
 
+function countdownInterval(){
+    if (--countdown == 0) {
+        clearInterval(timerId);
+        setIndicator("Time's up!");
+        foundWordBox.disabled = true;
+        reportScore();
+    }
+    const timeIndicator = document.querySelector("#timer-num");
+    timeIndicator.innerText = countdown
+}
+
+function updateRecords(numGames, highScore) {
+    const gamesDisp = document.querySelector("#num-games");
+    const scoreDisp = document.querySelector("#high-score");
+    
+    gamesDisp.innerText = numGames;
+    scoreDisp.innerText = highScore;
+}
+
+async function reportScore() {
+    console.log("reporting score")
+    response = await axios.post("/stats", {score})
+    
+    console.log(response.data)
+}
+
 gameBoard.style.display = "none";
 
 const startButton = document.querySelector("#start-button");
@@ -90,16 +116,6 @@ function startGame() {
     
     countdown = 60;
     timerId = setInterval(countdownInterval, 1000)
-}
-
-function countdownInterval(){
-    if (--countdown == 0) {
-        clearInterval(timerId);
-        setIndicator("Time's up!");
-        foundWordBox.disabled = true;
-    }
-    const timeIndicator = document.querySelector("#timer-num");
-    timeIndicator.innerText = countdown
 }
 
 startButton.addEventListener("click", startGame)
