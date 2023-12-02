@@ -19,3 +19,10 @@ class FlaskTests(TestCase):
     # not on board
     # empty string
     # no board
+    
+    # test cases for stats route
+    # lower than previous high score
+    # equal to previous high score
+    # greater than previous high score
+    # test that games played increments (all cases)
+    # test with bad input
