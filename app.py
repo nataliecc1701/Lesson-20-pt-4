@@ -13,6 +13,8 @@ boggle_game = Boggle()
 
 @app.route("/")
 def display_index():
+    '''this is the only route on this app that displays a page.
+    Refreshing the page makes a new board'''
     session["board"] = boggle_game.make_board()
     num_games = session.get("games-played", 0)
     high_score = session.get("high-score", 0)
@@ -20,6 +22,8 @@ def display_index():
 
 @app.route("/word")
 def check_word():
+    '''This route is part of the API and is not directly displayed to users. It takes
+    a word sent in via the query string and returns if the word should be scored'''
     word = request.args.get("word", None)
     board = session.get("board", None)
     retDict = {"word" : word}
@@ -35,6 +39,8 @@ def check_word():
 
 @app.route("/stats", methods=["POST"])
 def record_stats():
+    '''This route is used to record scores. Number of games played and high scores
+    are recorded on the session, for lack of any database'''
     req = request.get_json()
     
     games_played = session.get("games-played", 0) + 1
