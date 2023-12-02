@@ -89,17 +89,61 @@ class FlaskTests(TestCase):
             
             self.assertEqual(resp.status_code, 200)
             self.assertIn("not-word", json)
+    
+    # test cases for stats route
+    # no previous high score
+    # lower than previous high score
+    # greater than previous high score
+    # bad input
+    #
+    # tests each case:
+    # does the games played increment?
+    # is the high score correct
+    
+    def test_stats_no_previous(self):
+        with app.test_client() as client:
+            resp = client.post("/stats", json = {"score" : 10})
+            json = resp.get_data(as_text=True)
             
-    # def test_stats_route(self):
-    #     '''test cases for stats route
-    #     lower than previous high score
-    #     equal to previous high score
-    #     greater than previous high score
-    #     test that games played increments (all cases)
-    #     test with bad input'''
-    #     with app.test_client as client:
-    #         d = {"score" : 3}
-    #         resp = client.post("/stats", json=jsonify(d))
-    #         json = resp.get_data
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('"gamesPlayed": 1', json)
+            self.assertIn('"highScore": 10', json)
             
-    #         self.assertEqual()
+    def test_stats_lower_than_previous(self):
+        with app.test_client() as client:
+            with client.session_transaction() as change_session:
+                change_session["high-score"] = 50
+                change_session["games-played"] = 1
+            
+            resp = client.post("/stats", json = {"score" : 10})
+            json = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('"gamesPlayed": 2', json)
+            self.assertIn('"highScore": 50', json)
+            
+    def test_stats_greater_than_previous(self):
+        with app.test_client() as client:
+            with client.session_transaction() as change_session:
+                change_session["high-score"] = 50
+                change_session["games-played"] = 2
+            
+            resp = client.post("/stats", json = {"score" : 55})
+            json = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('"gamesPlayed": 3', json)
+            self.assertIn('"highScore": 55', json)
+            
+    def test_stats_equal_to_previous(self):
+        with app.test_client() as client:
+            with client.session_transaction() as change_session:
+                change_session["high-score"] = 55
+                change_session["games-played"] = 3
+            
+            resp = client.post("/stats", json = {"score" : 55})
+            json = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('"gamesPlayed": 4', json)
+            self.assertIn('"highScore": 55', json)
