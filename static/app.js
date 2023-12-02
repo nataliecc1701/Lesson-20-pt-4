@@ -1,6 +1,7 @@
 const foundWordsSet = new Set();
 const foundWordsList = document.querySelector("ul.found-words");
 const foundWordsForm = document.querySelector("form.words-form");
+const gameBoard = document.querySelector(".game-board");
 const foundWordBox = foundWordsForm.querySelector("#word-input");
 
 let score = 0;
@@ -66,3 +67,7 @@ async function formSubmit(evt) {
 }
 
 foundWordsForm.addEventListener("submit", formSubmit);
+
+// startup stuff here: hide the game board
+// when you press the button (add this to gameboard.html),
+// show the gameboard and start the timer
