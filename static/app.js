@@ -98,8 +98,6 @@ function updateRecords(numGames, highScore) {
 }
 
 async function reportScore() {
-    console.log("reporting score")
-    
     response = await axios.post("/stats", {score})
     const { gamesPlayed, highScore } = response.data;
     
