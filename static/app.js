@@ -5,6 +5,8 @@ const gameBoard = document.querySelector(".game-board");
 const foundWordBox = foundWordsForm.querySelector("#word-input");
 
 let score = 0;
+let countdown = 60;
+let timerId;
 
 
 function setIndicator(s, errMsg=false) {
@@ -26,6 +28,10 @@ function updateScore() {
 
 async function formSubmit(evt) {
     evt.preventDefault();
+    
+    if(countdown == 0) {
+        return
+    }
     
     const foundWord = foundWordBox.value;
     foundWordBox.value = "";
@@ -71,3 +77,28 @@ foundWordsForm.addEventListener("submit", formSubmit);
 // startup stuff here: hide the game board
 // when you press the button (add this to gameboard.html),
 // show the gameboard and start the timer
+
+gameBoard.style.display = "none";
+
+const startButton = document.querySelector("#start-button");
+
+function startGame() {
+    
+    // show the game board, hide the start button
+    gameBoard.style.display = "initial";
+    startButton.style.display = "none";
+    
+    countdown = 60;
+    timerId = setInterval(countdownInterval, 1000)
+}
+
+function countdownInterval(){
+    if (--countdown == 0) {
+        clearInterval(timerId)
+        setIndicator("Time's up!")
+    }
+    const timeIndicator = document.querySelector("#timer-num");
+    timeIndicator.innerText = countdown
+}
+
+startButton.addEventListener("click", startGame)
