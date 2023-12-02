@@ -2,3 +2,7 @@
     font-size: x-large;
     font-weight: bold;
 }
+
+.found-words ul {
+    column-count: 3;
+}

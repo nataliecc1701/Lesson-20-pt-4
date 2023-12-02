@@ -18,7 +18,16 @@
         </tr>
         {% endfor %}
     </table>
+    <form class="words-form">
+        <label for="word-input">See a word?</label>
+        <input type="text" name="word-input" id="word-input">
+        <input type="submit" value="Go!">
+    </form>
+    <ul class="found-words"></ul>
     </container>
+    
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    <script src="static/app.js"></script>
 </body>
 
 </html>
