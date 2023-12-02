@@ -94,8 +94,9 @@ function startGame() {
 
 function countdownInterval(){
     if (--countdown == 0) {
-        clearInterval(timerId)
-        setIndicator("Time's up!")
+        clearInterval(timerId);
+        setIndicator("Time's up!");
+        foundWordBox.disabled = true;
     }
     const timeIndicator = document.querySelector("#timer-num");
     timeIndicator.innerText = countdown
