@@ -8,112 +8,124 @@ let score = 0;
 let countdown = 60;
 let timerId;
 
-
-function setIndicator(s, errMsg=false) {
-    const wordStatusIndicator = document.querySelector("#word-status");
-    wordStatusIndicator.innerText = s
+class Game {
+    constructor() {
+        this.score = 0
+        this.countdown = 60
+    }
     
-    if (errMsg) {
-        wordStatusIndicator.classList.add("status-error")
+    setIndicator(s, errMsg=false) {
+        const wordStatusIndicator = document.querySelector("#word-status");
+        wordStatusIndicator.innerText = s
+        
+        if (errMsg) {
+            wordStatusIndicator.classList.add("status-error")
+        }
+        else {
+            wordStatusIndicator.classList.remove("status-error")
+        }
     }
-    else {
-        wordStatusIndicator.classList.remove("status-error")
+    
+    updateScore() {
+        const scoreDisp = document.querySelector("#score-num");
+        scoreDisp.innerText = score;
+    }
+    
+    updateRecords(numGames, highScore) {
+        const gamesDisp = document.querySelector("#num-games");
+        const scoreDisp = document.querySelector("#high-score");
+        
+        gamesDisp.innerText = numGames;
+        scoreDisp.innerText = highScore;
+    }
+    
+    async reportScore() {
+        response = await axios.post("/stats", {score})
+        const { gamesPlayed, highScore } = response.data;
+        
+        this.updateRecords(gamesPlayed, highScore);
     }
 }
 
-function updateScore() {
-    const scoreDisp = document.querySelector("#score-num");
-    scoreDisp.innerText = score;
-}
+// these functions are called as event listeners
+// so they don't go inside a class because otherwise I have to deal with the tangle that
+// javascript makes of this.
 
 async function formSubmit(evt) {
     evt.preventDefault();
     
-    if(countdown == 0) {
+    if(game.countdown == 0) {
         return
     }
     
     const foundWord = foundWordBox.value;
     foundWordBox.value = "";
     
-    setIndicator("...")
+    game.setIndicator("...")
     try {
         response = await axios.get(`/word?word=${foundWord}`)
         const { word, result } = response.data
         
         if (result == "ok" && !foundWordsSet.has(word)) {
             foundWordsSet.add(word)
-            setIndicator("")
+            game.setIndicator("")
             
             const newLi = document.createElement("li");
             newLi.innerText = word;
             foundWordsList.appendChild(newLi);
             
             score += word.length;
-            updateScore();
+            game.updateScore();
         }
         else if (foundWordsSet.has(word)) {
-            setIndicator(`The word "${word}" is already found!`, true)
+            game.setIndicator(`The word "${word}" is already found!`, true)
         }
         else if (result == "not-word") {
-            setIndicator(`The word "${word}" is not in the dictionary`, true)
+            game.setIndicator(`The word "${word}" is not in the dictionary`, true)
         }
         else if (result == "not-on-board") {
-            setIndicator(`The word ${word} is not on the board`, true)
+            game.setIndicator(`The word ${word} is not on the board`, true)
         }
         else {
-            setIndicator("I don't know how you got here but this shouldn't happen", true)
+            game.setIndicator("I don't know how you got here but this shouldn't happen", true)
         }
     }
     catch {
-        wordStatusIndicator.innerText = "error in axios request"
+        game.setIndicator("error in axios request", true);
     }
 }
 
-foundWordsForm.addEventListener("submit", formSubmit);
+function countdownInterval(){
+    if (--game.countdown == 0) {
+        clearInterval(game.timer);
+        game.setIndicator("Time's up!");
+        foundWordBox.disabled = true;
+        game.reportScore();
+    }
+    const timeIndicator = document.querySelector("#timer-num");
+    timeIndicator.innerText = game.countdown
+}
 
 // startup stuff here: hide the game board
 // when you press the button (add this to gameboard.html),
 // show the gameboard and start the timer
 
-function countdownInterval(){
-    if (--countdown == 0) {
-        clearInterval(timerId);
-        setIndicator("Time's up!");
-        foundWordBox.disabled = true;
-        reportScore();
-    }
-    const timeIndicator = document.querySelector("#timer-num");
-    timeIndicator.innerText = countdown
-}
-
-function updateRecords(numGames, highScore) {
-    const gamesDisp = document.querySelector("#num-games");
-    const scoreDisp = document.querySelector("#high-score");
-    
-    gamesDisp.innerText = numGames;
-    scoreDisp.innerText = highScore;
-}
-
-async function reportScore() {
-    response = await axios.post("/stats", {score})
-    const { gamesPlayed, highScore } = response.data;
-    
-    updateRecords(gamesPlayed, highScore);
-}
+game = new Game;
+foundWordsForm.addEventListener("submit", formSubmit);
 
 gameBoard.style.display = "none";
-
 const startButton = document.querySelector("#start-button");
 
+
+// one last event listener
 function startGame() {
     
     // show the game board, hide the start button
     gameBoard.style.display = "initial";
     startButton.style.display = "none";
     
-    countdown = 60;
-    timerId = setInterval(countdownInterval, 1000)
+    game.countdown = 60;
+    game.timer = setInterval(countdownInterval, 1000)
 }
 
 startButton.addEventListener("click", startGame)
