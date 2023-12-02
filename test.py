@@ -108,6 +108,13 @@ class FlaskTests(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn('"gamesPlayed": 1', json)
             self.assertIn('"highScore": 10', json)
+    
+    def test_stats_bad_request(self):
+        with app.test_client() as client:
+            resp = client.post("/stats")
+            json = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 400)
             
     def test_stats_lower_than_previous(self):
         with app.test_client() as client:

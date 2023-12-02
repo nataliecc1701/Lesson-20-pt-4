@@ -43,6 +43,12 @@ def record_stats():
     are recorded on the session, for lack of any database'''
     req = request.get_json()
     
+    if not req or not req.get("score", None):
+        return jsonify({
+            "gamesPlayed" : session.get("games-played", 0),
+            "highScore" : session.get("high-score", 0)
+            }), 400
+        
     games_played = session.get("games-played", 0) + 1
     high_score = max(session.get("high-score", 0), req.get("score", 0))
     
